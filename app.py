@@ -11,7 +11,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(exist_ok=True)
 
-app = Flask(__name__)
+# Configurar Flask para servir el build de React
+FRONTEND_DIR = BASE_DIR / "frontend" / "dist"
+app = Flask(__name__, static_folder=str(FRONTEND_DIR), static_url_path="")
 
 # Almacén de trabajos en memoria: job_id -> dict con el estado de la descarga
 JOBS = {}
@@ -37,7 +39,9 @@ def format_duration(seconds):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if FRONTEND_DIR.exists():
+        return send_file(FRONTEND_DIR / "index.html")
+    return "Frontend no compilado. Por favor corre 'npm run build' en la carpeta frontend.", 404
 
 
 @app.route("/api/info", methods=["POST"])
