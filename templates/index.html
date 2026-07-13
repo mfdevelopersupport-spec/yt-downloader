@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REELDECK — Descarga video y audio de YouTube</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="tape-noise" aria-hidden="true"></div>
+
+<main class="app">
+
+  <header class="hero">
+    <div class="hero__eyebrow">
+      <span class="rec-dot" id="recDot" aria-hidden="true"></span>
+      <span>DESCARGAS LOCALES · SIN LÍMITES</span>
+    </div>
+    <h1 class="hero__title">REEL<span>DECK</span></h1>
+    <p class="hero__tagline">Pega el enlace, elige el formato, graba tu copia.</p>
+  </header>
+
+  <section class="deck" aria-label="Analizar enlace de YouTube">
+    <form id="urlForm" class="deck__slot" autocomplete="off">
+      <svg class="deck__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10 8L16 12L10 16V8Z" fill="currentColor"/>
+        <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+      <input
+        id="urlInput"
+        type="text"
+        inputmode="url"
+        placeholder="https://www.youtube.com/watch?v=..."
+        aria-label="Enlace de YouTube"
+        required
+      />
+      <button type="submit" class="btn btn--primary" id="analyzeBtn">
+        <span class="btn__label">Analizar</span>
+        <span class="btn__spinner" aria-hidden="true"></span>
+      </button>
+    </form>
+    <p class="deck__error" id="formError" role="alert" aria-live="polite"></p>
+  </section>
+
+  <section class="preview" id="previewSection" hidden>
+    <div class="preview__card">
+      <div class="preview__thumb-wrap">
+        <img id="previewThumb" class="preview__thumb" alt="" />
+        <span class="preview__duration" id="previewDuration">0:00</span>
+      </div>
+      <div class="preview__meta">
+        <h2 class="preview__title" id="previewTitle">—</h2>
+        <p class="preview__channel" id="previewChannel">—</p>
+      </div>
+    </div>
+
+    <div class="options">
+      <div class="options__group">
+        <span class="options__label">Formato</span>
+        <div class="segmented" id="modeTabs" role="tablist">
+          <button type="button" class="segmented__btn is-active" data-mode="video" role="tab" aria-selected="true">
+            Video
+          </button>
+          <button type="button" class="segmented__btn" data-mode="audio" role="tab" aria-selected="false">
+            Audio
+          </button>
+        </div>
+      </div>
+
+      <div class="options__group">
+        <span class="options__label" id="qualityLabel">Calidad</span>
+        <div class="pills" id="qualityPills" role="radiogroup" aria-labelledby="qualityLabel"></div>
+      </div>
+    </div>
+
+    <div class="transport">
+      <div class="waveform" id="waveform" aria-hidden="true">
+        <!-- barras generadas por JS -->
+      </div>
+      <div class="transport__row">
+        <button type="button" class="btn btn--accent" id="downloadBtn">
+          <span class="btn__label">Descargar</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+        <div class="transport__stats" id="transportStats" aria-live="polite">
+          <span id="statPercent">0%</span>
+          <span class="dot-sep">·</span>
+          <span id="statSpeed">—</span>
+          <span class="dot-sep">·</span>
+          <span id="statEta">—</span>
+        </div>
+      </div>
+      <p class="transport__error" id="downloadError" role="alert" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="history" aria-label="Historial de esta sesión">
+    <h3 class="history__title">Historial de esta sesión</h3>
+    <ul class="history__list" id="historyList">
+      <li class="history__empty" id="historyEmpty">Todavía no hay descargas. Lo que grabes aquí aparecerá en esta lista.</li>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    <p>Corre en tu máquina · Los archivos se guardan a través de tu navegador · Requiere ffmpeg instalado</p>
+  </footer>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
