@@ -161,10 +161,13 @@ def run_download(job_id, url, mode, quality, job_dir: Path):
     if mode == "video":
         height = int(quality) if quality else 1080
         ydl_opts["format"] = (
+            f"bestvideo[height<={height}][vcodec^=avc1]+bestaudio[acodec^=mp4a]/"
             f"bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/"
             f"bestvideo[height<={height}]+bestaudio/best[height<={height}]"
         )
         ydl_opts["merge_output_format"] = "mp4"
+        # Forzar la codificación a MP4 (H.264/AAC) para máxima compatibilidad con móviles (iOS/Android) y PC
+        ydl_opts["recode_video"] = "mp4"
     else:
         ydl_opts["format"] = "bestaudio/best"
         bitrate = str(quality) if quality and quality != "original" else "192"
@@ -183,6 +186,12 @@ def run_download(job_id, url, mode, quality, job_dir: Path):
                 mp3path = base + ".mp3"
                 if os.path.exists(mp3path):
                     filepath = mp3path
+            elif mode == "video":
+                # Si yt-dlp recodificó el video, el nombre del archivo puede cambiar a .mp4
+                base, _ = os.path.splitext(filepath)
+                mp4path = base + ".mp4"
+                if os.path.exists(mp4path):
+                    filepath = mp4path
 
         with JOBS_LOCK:
             job = JOBS.get(job_id)
@@ -219,5 +228,5 @@ def api_file(job_id):
 
 
 if __name__ == "__main__":
-    print("\n  REELDECK corriendo en http://127.0.0.1:5000\n")
+    print("\n  MTS.DOWNLOADER corriendo en http://127.0.0.1:5000\n")
     app.run(debug=False, port=5000)
